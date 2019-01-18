@@ -10,7 +10,7 @@ class AfcForm extends Component {
     return (
       <div className="afc-form">
       	<form onSubmit={handleFormSubmit}>
-          <AfcSelect events={events} /><br />
+          <AfcSelect events={events} name={'eventtype'} /><br />
       		<AfcInput type="text" name="Name" /><br />
           <AfcInput type="text" name="Total" /><br />
       		<AfcInput type="submit" />

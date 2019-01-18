@@ -2,7 +2,9 @@ import React, { Component } from 'react';
 import {
     Switch,
     Route,
-    Link
+    Link,
+    withRouter,
+    Redirect
 } from "react-router-dom";
 import './App.css';
 import AfcForm from './Components/AfcForm';
@@ -20,7 +22,7 @@ class App extends Component {
 	  			{ personId: 4, name: 'Serg', total: 33 }
 	  		]
   		},
-  		selectedEvent: 'jaffa'
+      selectedEvent: 'jaffa'
   }
 
   handleChange = (event) => {
@@ -29,11 +31,23 @@ class App extends Component {
 
   handleFormSubmit = (event) => {
     event.preventDefault();
-    console.log("TRIGGERD!")
 
-    console.log(event.target)
+    let { Name, Total, eventtype } = event.target.elements;
 
-    //this.setState({ selectedEvent: event });
+    this.setState(prevState => {
+      let eventObject = this.state.events[eventtype.value];
+      return {
+        events: {
+          [eventtype.value]: this.state.events[eventtype.value].concat({
+            personId: 22,
+            name: Name.value,
+            total: Total.value
+          })
+        }
+      }
+    });
+    this.props.history.push(`/${eventtype.value}`);
+
   }
 
   render() {
@@ -59,4 +73,4 @@ class App extends Component {
   }
 }
 
-export default App;
+export default withRouter(App);
