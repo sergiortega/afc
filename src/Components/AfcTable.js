@@ -8,13 +8,13 @@ class AfcTable extends Component {
         <table>
           <tbody>
             <tr>
-              <th>Name</th>
-              <th>Total</th>
+              <th onClick={()=>this.props.handleSort('name')}>Name</th>
+              <th onClick={()=>this.props.handleSort('total')}>Total</th>
             </tr>
-            {this.props.eventData.map(event => {
+            {this.props.eventData && this.props.eventData.map(event => {
               return (
                 <tr key={event.personId}>
-                  <td>{event.name}</td>
+                  <td>{this.props.people.find(p=>p.personId === event.personId).name}</td>
                   <td>{event.total}</td>
                 </tr>
               );
