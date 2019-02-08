@@ -5,35 +5,17 @@ import {
     Link,
     withRouter
 } from "react-router-dom";
+import { connect } from 'react-redux';
+import { listEvents, addEvents, changeSelectedEvent } from './store/actions/events';
+
 import './App.css';
 import AfcForm from './Components/AfcForm';
 import AfcTable from './Components/AfcTable';
 
-import uniqueId from './utility/tools';
 
 class App extends Component {
-   state = {
-    people: [      
-      {personId: 1, name: 'Javier'},
-      {personId: 2, name: 'John'},
-      {personId: 3, name: 'Paul'},
-      {personId: 4, name: 'Serg'}
-    ],
-   	events: {
-   		  'jaffa': [
-	  			{ personId: 1, total: 6 },
-	  			{ personId: 2, total: 4 }
-	  		],
-	  	  'cracker': [
-	  			{ personId: 3, total: 55 },
-	  			{ personId: 4, total: 33 }
-	  		]
-  		},
-      selectedEvent: 'jaffa'
-  }
-
   handleChange = (event) => {
-    this.setState({ selectedEvent: event })
+    this.props.changeSelectedEvent(event);
   }
 
   handleFormSubmit = (event) => {
@@ -41,34 +23,12 @@ class App extends Component {
 
     let { Name, Total, eventtype } = event.target.elements;
 
-    this.setState(prevState => {
-      let eventObject = this.state.events[eventtype.value];
-
-      /* new people id */
-      let personId = uniqueId();
-
-      /* new people object */
-      let newPeople = {
-        personId, name: Name.value
-      }
-
-      /* new events object */
-      let newData = prevState.events[eventtype.value].concat({
-        personId,
-        total: Total.value
-      });
-
-      return {
-        ...prevState,
-        people: prevState.people.concat(newPeople),
-        events: {
-          ...prevState.events,
-          [eventtype.value]: newData
-        },
-        selectedEvent: eventtype.value
-      }
-
+    this.props.addEvents({
+      name: Name.value,
+      total: Total.value,
+      eventType: eventtype.value
     });
+
     this.props.history.push(`/${eventtype.value}`);
 
   }
@@ -78,6 +38,7 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.props.event)
     return (
       <div className="App">
         <Link to='/jaffa' onClick={() => this.handleChange('jaffa')} className="gap">Jaffa</Link>
@@ -88,13 +49,13 @@ class App extends Component {
 
         <Switch>
           <Route exact path="/form" render={({history}) => (
-            <AfcForm events={this.state.events} handleFormSubmit={this.handleFormSubmit.bind(this)} />
+            <AfcForm events={this.props.data.events} handleFormSubmit={this.handleFormSubmit.bind(this)} />
           )}/>
           <Route path="/:id" render={({history}) => (
             <AfcTable
-              eventData={this.state.events[this.state.selectedEvent]}
-              selectedEvent={this.state.selectedEvent}
-              people={this.state.people}
+              eventData={this.props.data.events[this.props.data.selectedEvent]}
+              selectedEvent={this.props.data.selectedEvent}
+              people={this.props.data.people}
               handleSort={this.handleSort}
             />
           )}/>
@@ -104,4 +65,8 @@ class App extends Component {
   }
 }
 
-export default withRouter(App);
+const mapStateToProps = state => ({
+  data: state.event
+});
+
+export default connect(mapStateToProps, { listEvents, addEvents, changeSelectedEvent })(withRouter(App));
