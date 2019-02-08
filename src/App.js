@@ -38,7 +38,6 @@ class App extends Component {
   }
 
   render() {
-    console.log(this.props.event)
     return (
       <div className="App">
         <Link to='/jaffa' onClick={() => this.handleChange('jaffa')} className="gap">Jaffa</Link>
@@ -69,4 +68,4 @@ const mapStateToProps = state => ({
   data: state.event
 });
 
-export default connect(mapStateToProps, { listEvents, addEvents, changeSelectedEvent })(withRouter(App));
+export default withRouter(connect(mapStateToProps, { listEvents, addEvents, changeSelectedEvent })(App));
